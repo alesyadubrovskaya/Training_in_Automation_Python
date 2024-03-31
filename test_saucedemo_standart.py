@@ -1,0 +1,495 @@
+from selenium import webdriver
+import time
+import pytest
+
+driver = webdriver.Chrome()
+
+def test_get_authurl():
+    driver.get('https://www.saucedemo.com/v1/index.html')
+    assert driver.current_url == 'https://www.saucedemo.com/v1/index.html'
+    time.sleep(3)
+def test_auth_ok():
+    driver.get('https://www.saucedemo.com/v1/index.html')
+    user_name = driver.find_element('xpath', '//*[@id="user-name"]')
+    user_name.send_keys('standard_user')
+    time.sleep(2)
+    password = driver.find_element('xpath', '//*[@id="password"]')
+    password.send_keys('secret_sauce')
+    time.sleep(2)
+    login = driver.find_element('xpath', '//*[@id="login-button"]')
+    login.click()
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/inventory.html', 'Not this URL'
+def test_auth_wrong():
+    driver.get('https://www.saucedemo.com/v1/index.html')
+    user_name = driver.find_element('xpath', '//*[@id="user-name"]')
+    user_name.send_keys('Abc123+-')
+    time.sleep(2)
+    password = driver.find_element('xpath', '//*[@id="password"]')
+    password.send_keys('123Abc+-')
+    time.sleep(2)
+    login = driver.find_element('xpath', '//*[@id="login-button"]')
+    login.click()
+    time.sleep(2)
+    error_login = driver.find_element('xpath','//*[@data-test="error"]')
+    assert error_login.text == 'Epic sadface: Username and password do not match any user in this service', 'OK'
+def test_auth_empty():
+    driver.get('https://www.saucedemo.com/v1/index.html')
+    user_name = driver.find_element('xpath', '//*[@id="user-name"]')
+    user_name.send_keys('')
+    time.sleep(2)
+    password = driver.find_element('xpath', '//*[@id="password"]')
+    password.send_keys('')
+    time.sleep(2)
+    login = driver.find_element('xpath', '//*[@id="login-button"]')
+    login.click()
+    time.sleep(2)
+    error_login = driver.find_element('xpath', '//*[@data-test="error"]')
+    assert error_login.text == 'Epic sadface: Username is required', 'OK'
+def test_auth_wrongpassword():
+    driver.get('https://www.saucedemo.com/v1/index.html')
+    user_name = driver.find_element('xpath', '//*[@id="user-name"]')
+    user_name.send_keys('standard_user')
+    time.sleep(2)
+    password = driver.find_element('xpath', '//*[@id="password"]')
+    password.send_keys('123Abc+-')
+    time.sleep(2)
+    login = driver.find_element('xpath', '//*[@id="login-button"]')
+    login.click()
+    time.sleep(2)
+    error_login = driver.find_element('xpath', '//*[@data-test="error"]')
+    assert error_login.text == 'Epic sadface: Username and password do not match any user in this service', 'OK'
+def test_auth_wrongname():
+    driver.get('https://www.saucedemo.com/v1/index.html')
+    user_name = driver.find_element('xpath', '//*[@id="user-name"]')
+    user_name.send_keys('Abc123+-')
+    time.sleep(2)
+    password = driver.find_element('xpath', '//*[@id="password"]')
+    password.send_keys('secret_sauce')
+    time.sleep(2)
+    login = driver.find_element('xpath', '//*[@id="login-button"]')
+    login.click()
+    time.sleep(2)
+    error_login = driver.find_element('xpath', '//*[@data-test="error"]')
+    assert error_login.text == 'Epic sadface: Username and password do not match any user in this service', 'OK'
+def test_auth_emptyname():
+    driver.get('https://www.saucedemo.com/v1/index.html')
+    user_name = driver.find_element('xpath', '//*[@id="user-name"]')
+    user_name.send_keys('')
+    time.sleep(2)
+    password = driver.find_element('xpath', '//*[@id="password"]')
+    password.send_keys('secret_sauce')
+    time.sleep(2)
+    login = driver.find_element('xpath', '//*[@id="login-button"]')
+    login.click()
+    time.sleep(2)
+    error_login = driver.find_element('xpath', '//*[@data-test="error"]')
+    assert error_login.text == 'Epic sadface: Username is required', 'OK'
+def test_auth_emptypassword():
+    driver.get('https://www.saucedemo.com/v1/index.html')
+    user_name = driver.find_element('xpath', '//*[@id="user-name"]')
+    user_name.send_keys('standard_user')
+    time.sleep(2)
+    password = driver.find_element('xpath', '//*[@id="password"]')
+    password.send_keys('')
+    time.sleep(2)
+    login = driver.find_element('xpath', '//*[@id="login-button"]')
+    login.click()
+    time.sleep(2)
+    error_login = driver.find_element('xpath', '//*[@data-test="error"]')
+    assert error_login.text == 'Epic sadface: Password is required', 'OK'
+
+def test_select_item_by_title():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    time.sleep(2)
+    item1 = driver.find_element('xpath', '//*[@id="item_4_title_link"]')
+    item1.click()
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/inventory-item.html?id=4', 'Not this URL'
+    item1_img = driver.find_element('xpath', '//*[@class="inventory_details_img"]')
+    assert item1_img.get_dom_attribute('src') == './img/sauce-backpack-1200x1500.jpg', 'No'
+    item_title = driver.find_element('xpath', '//*[@class="inventory_details_name"]')
+    assert item_title.text == 'Sauce Labs Backpack', 'Wrong title'
+def test_select_item_by_image():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    time.sleep(2)
+    item1 = driver.find_element('xpath', '(//*[@class="inventory_item_img"])[1]')
+    item1.click()
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/inventory-item.html?id=4', 'Not this URL'
+    item1_img = driver.find_element('xpath', '//*[@class="inventory_details_img"]')
+    assert item1_img.get_dom_attribute('src') == './img/sauce-backpack-1200x1500.jpg', 'No'
+    item_title = driver.find_element('xpath', '//*[@class="inventory_details_name"]')
+    assert item_title.text == 'Sauce Labs Backpack', 'Wrong title'
+
+def test_filter():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    time.sleep(2)
+    filter = driver.find_element('xpath', '//*[@class="product_sort_container"]')
+    filter.click()
+    time.sleep(2)
+    za = driver.find_element('xpath', '//*[@value="za"]')
+    za.click()
+    time.sleep(2)
+    first_item = driver.find_element('xpath', '(//*[@class="inventory_item_name"])[1]')
+    assert first_item.text == 'Test.allTheThings() T-Shirt (Red)', 'Wrong title'
+    lohi = driver.find_element('xpath', '//*[@value="lohi"]')
+    lohi.click()
+    time.sleep(2)
+    first_item_price = driver.find_element('xpath', '(//*[@class="inventory_item_price"])[1]')
+    assert first_item_price.text == '$7.99', 'Wrong price'
+    hilo = driver.find_element('xpath', '//*[@value="hilo"]')
+    hilo.click()
+    time.sleep(2)
+    first_item_price = driver.find_element('xpath', '(//*[@class="inventory_item_price"])[1]')
+    assert first_item_price.text == '$49.99', 'Wrong price'
+    az = driver.find_element('xpath', '//*[@value="az"]')
+    az.click()
+    time.sleep(2)
+    first_item = driver.find_element('xpath', '(//*[@class="inventory_item_name"])[1]')
+    assert first_item.text == 'Sauce Labs Backpack', 'Wrong title'
+
+def test_add_to_cart_mp():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[3]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/cart.html', 'Not this URL'
+    item_name = driver.find_element('xpath', '(//*[@class="inventory_item_name"])')
+    assert item_name.text == 'Sauce Labs Bolt T-Shirt', 'Wrong item'
+def test_add_to_cart_ip():
+    driver.get('https://www.saucedemo.com/v1/inventory-item.html?id=1')
+    add_button_3 = driver.find_element('xpath', '//button[@class="btn_primary btn_inventory"]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/cart.html', 'Not this URL'
+    item_name = driver.find_element('xpath', '//*[@class="inventory_item_name"]')
+    assert item_name.text == 'Sauce Labs Bolt T-Shirt', 'Wrong item'
+
+def test_remove_from_cart_mp():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[2]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/cart.html', 'Not this URL'
+    item_name = driver.find_element('xpath', '//*[@class="inventory_item_name"]')
+    assert item_name.text == 'Sauce Labs Bike Light', 'Wrong item'
+    driver.back()
+    time.sleep(2)
+    remove_button = driver.find_element('xpath', '//button[@class="btn_secondary btn_inventory"]')
+    remove_button.click()
+    time.sleep(2)
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/cart.html', 'Not this URL'
+def test_remove_from_cart_ip():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[2]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/cart.html', 'Not this URL'
+    item_name = driver.find_element('xpath', '//*[@class="inventory_item_name"]')
+    assert item_name.text == 'Sauce Labs Bike Light', 'Wrong item'
+    item = driver.find_element('xpath', '//*[@id="item_0_title_link"]')
+    item.click()
+    time.sleep(2)
+    item_img = driver.find_element('xpath', '//*[@class="inventory_details_img"]')
+    assert item_img.get_dom_attribute('src') == './img/bike-light-1200x1500.jpg', 'No'
+    remove_button = driver.find_element('xpath', '//button[@class="btn_secondary btn_inventory"]')
+    remove_button.click()
+    time.sleep(2)
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/cart.html', 'Not this URL'
+def test_remove_from_cart_cp():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[2]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/cart.html', 'Not this URL'
+    item_name = driver.find_element('xpath', '//*[@class="inventory_item_name"]')
+    assert item_name.text == 'Sauce Labs Bike Light', 'Wrong item'
+    remove_button = driver.find_element('xpath', '//button[@class="btn_secondary cart_button"]')
+    remove_button.click()
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/cart.html', 'Not this URL'
+
+def test_checkout_ok():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[5]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/cart.html', 'Not this URL'
+    item_name = driver.find_element('xpath', '//*[@class="inventory_item_name"]')
+    assert item_name.text == 'Sauce Labs Onesie', 'Wrong item'
+    checkout = driver.find_element('xpath', '//*[@class="btn_action checkout_button"]')
+    checkout.click()
+    time.sleep(2)
+    fname = driver.find_element('xpath', '//*[@id="first-name"]')
+    fname.send_keys('Alex')
+    time.sleep(2)
+    lname = driver.find_element('xpath', '//*[@id="last-name"]')
+    lname.send_keys('Dub')
+    time.sleep(2)
+    zipcode = driver.find_element('xpath', '//*[@id="postal-code"]')
+    zipcode.send_keys('246012 Gomel BY')
+    time.sleep(2)
+    nextbutton = driver.find_element('xpath', '//*[@type="submit"]')
+    nextbutton.click()
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/checkout-step-two.html'
+    finish = driver.find_element('xpath', '//*[@class="btn_action cart_button"]')
+    finish.click()
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/checkout-complete.html'
+def test_checkout_wrong():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[5]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    backret = driver.find_element('xpath', '//*[@class="btn_secondary"]')
+    backret.click()
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[2]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/cart.html', 'Not this URL'
+    item1_name = driver.find_element('xpath', '(//*[@class="inventory_item_name"])[1]')
+    assert item1_name.text == 'Sauce Labs Onesie', 'Wrong item'
+    item2_name = driver.find_element('xpath', '(//*[@class="inventory_item_name"])[2]')
+    assert item2_name.text == 'Sauce Labs Bike Light', 'Wrong item'
+    checkout = driver.find_element('xpath', '//*[@class="btn_action checkout_button"]')
+    checkout.click()
+    time.sleep(2)
+    fname = driver.find_element('xpath', '//*[@id="first-name"]')
+    fname.send_keys('.')
+    time.sleep(2)
+    lname = driver.find_element('xpath', '//*[@id="last-name"]')
+    lname.send_keys('a')
+    time.sleep(2)
+    zipcode = driver.find_element('xpath', '//*[@id="postal-code"]')
+    zipcode.send_keys('Л')
+    time.sleep(2)
+    nextbutton = driver.find_element('xpath', '//*[@type="submit"]')
+    nextbutton.click()
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/checkout-step-two.html'
+    finish = driver.find_element('xpath', '//*[@class="btn_action cart_button"]')
+    finish.click()
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/checkout-complete.html'
+def test_checkout_empty():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[5]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[2]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/cart.html', 'Not this URL'
+    item1_name = driver.find_element('xpath', '(//*[@class="inventory_item_name"])[1]')
+    assert item1_name.text == 'Sauce Labs Onesie', 'Wrong item'
+    item2_name = driver.find_element('xpath', '(//*[@class="inventory_item_name"])[2]')
+    assert item2_name.text == 'Sauce Labs Bike Light', 'Wrong item'
+    checkout = driver.find_element('xpath', '//*[@class="btn_action checkout_button"]')
+    checkout.click()
+    time.sleep(2)
+    fname = driver.find_element('xpath', '//*[@id="first-name"]')
+    fname.send_keys('')
+    time.sleep(2)
+    lname = driver.find_element('xpath', '//*[@id="last-name"]')
+    lname.send_keys('')
+    time.sleep(2)
+    zipcode = driver.find_element('xpath', '//*[@id="postal-code"]')
+    zipcode.send_keys('')
+    time.sleep(2)
+    nextbutton = driver.find_element('xpath', '//*[@type="submit"]')
+    nextbutton.click()
+    time.sleep(2)
+    error_mes = driver.find_element('xpath', '//*[@data-test="error"]')
+    assert error_mes.text == 'Error: First Name is required', 'Ok'
+def test_checkout_empty_fname():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[5]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[2]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/cart.html', 'Not this URL'
+    item1_name = driver.find_element('xpath', '(//*[@class="inventory_item_name"])[1]')
+    assert item1_name.text == 'Sauce Labs Onesie', 'Wrong item'
+    item2_name = driver.find_element('xpath', '(//*[@class="inventory_item_name"])[2]')
+    assert item2_name.text == 'Sauce Labs Bike Light', 'Wrong item'
+    checkout = driver.find_element('xpath', '//*[@class="btn_action checkout_button"]')
+    checkout.click()
+    time.sleep(2)
+    fname = driver.find_element('xpath', '//*[@id="first-name"]')
+    fname.send_keys('')
+    time.sleep(2)
+    lname = driver.find_element('xpath', '//*[@id="last-name"]')
+    lname.send_keys('Dub')
+    time.sleep(2)
+    zipcode = driver.find_element('xpath', '//*[@id="postal-code"]')
+    zipcode.send_keys('Л')
+    time.sleep(2)
+    nextbutton = driver.find_element('xpath', '//*[@type="submit"]')
+    nextbutton.click()
+    time.sleep(2)
+    error_mes = driver.find_element('xpath', '//*[@data-test="error"]')
+    assert error_mes.text == 'Error: First Name is required', 'Ok'
+def test_checkout_empty_lname():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[5]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[2]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/cart.html', 'Not this URL'
+    item1_name = driver.find_element('xpath', '(//*[@class="inventory_item_name"])[1]')
+    assert item1_name.text == 'Sauce Labs Onesie', 'Wrong item'
+    item2_name = driver.find_element('xpath', '(//*[@class="inventory_item_name"])[2]')
+    assert item2_name.text == 'Sauce Labs Bike Light', 'Wrong item'
+    checkout = driver.find_element('xpath', '//*[@class="btn_action checkout_button"]')
+    checkout.click()
+    time.sleep(2)
+    fname = driver.find_element('xpath', '//*[@id="first-name"]')
+    fname.send_keys('.')
+    time.sleep(2)
+    lname = driver.find_element('xpath', '//*[@id="last-name"]')
+    lname.send_keys('')
+    time.sleep(2)
+    zipcode = driver.find_element('xpath', '//*[@id="postal-code"]')
+    zipcode.send_keys('246012 Gomel BY')
+    time.sleep(2)
+    nextbutton = driver.find_element('xpath', '//*[@type="submit"]')
+    nextbutton.click()
+    time.sleep(2)
+    error_mes = driver.find_element('xpath', '//*[@data-test="error"]')
+    assert error_mes.text == 'Error: Last Name is required', 'Ok'
+def test_checkout_empty_zipcode():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[5]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[2]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/cart.html', 'Not this URL'
+    item1_name = driver.find_element('xpath', '(//*[@class="inventory_item_name"])[1]')
+    assert item1_name.text == 'Sauce Labs Onesie', 'Wrong item'
+    item2_name = driver.find_element('xpath', '(//*[@class="inventory_item_name"])[2]')
+    assert item2_name.text == 'Sauce Labs Bike Light', 'Wrong item'
+    checkout = driver.find_element('xpath', '//*[@class="btn_action checkout_button"]')
+    checkout.click()
+    time.sleep(2)
+    fname = driver.find_element('xpath', '//*[@id="first-name"]')
+    fname.send_keys('Alex')
+    time.sleep(2)
+    lname = driver.find_element('xpath', '//*[@id="last-name"]')
+    lname.send_keys('k')
+    time.sleep(2)
+    zipcode = driver.find_element('xpath', '//*[@id="postal-code"]')
+    zipcode.send_keys('')
+    time.sleep(2)
+    nextbutton = driver.find_element('xpath', '//*[@type="submit"]')
+    nextbutton.click()
+    time.sleep(2)
+    error_mes = driver.find_element('xpath', '//*[@data-test="error"]')
+    assert error_mes.text == 'Error: Postal Code is required', 'Ok'
+
+def test_sidebar_allitems():
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    sidebar = driver.find_element('xpath', '(//button)[2]')
+    sidebar.click()
+    time.sleep(2)
+    allitems = driver.find_element('xpath', '(//a[@class="bm-item menu-item"])[1]')
+    allitems.click()
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/inventory.html'
+def test_sidebar_about():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    time.sleep(2)
+    sidebar = driver.find_element('xpath', '(//button)[2]')
+    sidebar.click()
+    time.sleep(2)
+    about = driver.find_element('xpath', '(//a[@class="bm-item menu-item"])[2]')
+    about.click()
+    time.sleep(2)
+    assert driver.current_url == 'https://saucelabs.com/'
+def test_sidebar_reset():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    add_button_1 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[1]')
+    time.sleep(2)
+    add_button_1.click()
+    time.sleep(2)
+    add_button_2 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[2]')
+    time.sleep(2)
+    add_button_2.click()
+    time.sleep(2)
+    add_button_3 = driver.find_element('xpath', '(//button[@class="btn_primary btn_inventory"])[3]')
+    time.sleep(2)
+    add_button_3.click()
+    time.sleep(2)
+    driver.get('https://www.saucedemo.com/v1/cart.html')
+    time.sleep(2)
+    sidebar = driver.find_element('xpath', '(//button)[2]')
+    sidebar.click()
+    time.sleep(2)
+    reset = driver.find_element('xpath', '(//a[@class="bm-item menu-item"])[4]')
+    reset.click()
+    time.sleep(2)
+    driver.refresh()
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/cart.html'
+def test_sidebar_logout():
+    driver.get('https://www.saucedemo.com/v1/inventory.html')
+    time.sleep(2)
+    sidebar = driver.find_element('xpath', '(//button)[2]')
+    sidebar.click()
+    time.sleep(2)
+    logout = driver.find_element('xpath', '(//a[@class="bm-item menu-item"])[3]')
+    logout.click()
+    time.sleep(2)
+    assert driver.current_url == 'https://www.saucedemo.com/v1/index.html'
