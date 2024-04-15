@@ -1,0 +1,57 @@
+username_input = ('xpath', '//input[@data-test="username"]')
+password_input = ('xpath', '//input[@data-test="password"]')
+login_button = ('xpath', '//input[@data-test="login-button"]')
+login_error1 = ('xpath', '//*[@data-test="error"]')
+
+filter = ('xpath', '//select')
+za = ('xpath', '//*[@value="za"]')
+lh = ('xpath', '//*[@value="lohi"]')
+hl = ('xpath', '//*[@value="hilo"]')
+az = ('xpath', '//*[@value="az"]')
+
+first_item = ('xpath', '(//*[@data-test="inventory-item-name"])[1]')
+last_item = ('xpath', '(//*[@data-test="inventory-item-name"])[6]')
+first_item_price = ('xpath', '(//*[@data-test="inventory-item-price"])[1]')
+last_item_price = ('xpath', '(//*[@data-test="inventory-item-price"])[6]')
+
+item_1_link = ('xpath', '(//*[@data-test="inventory-item-name"])[1]')
+item_1_img = ('xpath', '//img[@class="inventory_details_img"]')
+item_1_name = ('xpath', '//*[@data-test="inventory-item-name"]')
+item_1_descr = ('xpath', '//*[@data-test="inventory-item-desc"]')
+item_1_price = ('xpath', '//*[@data-test="inventory-item-price"]')
+item_1_imglink = ('xpath', '(//*[@data-test="inventory-item-sauce-labs-backpack-img"])[1]')
+
+add_button_mp = ('xpath', '//button[@id = "add-to-cart-sauce-labs-backpack"]')
+add_button_mp_1 = ('xpath', '//button[@id = "add-to-cart-sauce-labs-bike-light"]')
+add_button_mp_2 = ('xpath', '//button[@id = "add-to-cart-sauce-labs-bolt-t-shirt"]')
+add_button_mp_3 = ('xpath', '//button[@id = "add-to-cart-sauce-labs-fleece-jacket"]')
+add_button_mp_4 = ('xpath', '//button[@id = "add-to-cart-sauce-labs-onesie"]')
+add_button_mp_5 = ('xpath', '//button[@id = "add-to-cart-test.allthethings()-t-shirt-(red)"]')
+add_button_ip = ('xpath', '//button[@id = "add-to-cart"]')
+cart_button_mp = ('xpath', '//*[@data-test = "shopping-cart-link"]')
+
+remove_buttom_ip = ('xpath', '//button[@id = "remove"]')
+remove_button_mp = ('xpath', '//button[@id = "remove-sauce-labs-backpack"]')
+remove_button_mp_1 = ('xpath', '//button[@id = "remove-sauce-labs-bike-light"]')
+remove_button_mp_2 = ('xpath', '//button[@id = "remove-sauce-labs-bolt-t-shirt"]')
+remove_button_mp_3 = ('xpath', '//button[@id = "remove-sauce-labs-fleece-jacket"]')
+remove_button_mp_4 = ('xpath', '//button[@id = "remove-sauce-labs-onesie"]')
+remove_button_mp_5 = ('xpath', '//button[@id = "remove-sauce-labs-test.allthethings()-t-shirt-(red)"]')
+
+sidebar_button = ('xpath', '//*[@id = "react-burger-menu-btn"]')
+about_button = ('xpath', '//*[@id = "about_sidebar_link"]')
+logout_button = ('xpath', '//*[@id = "logout_sidebar_link"]')
+allitems_button = ('xpath', '//*[@id = "inventory_sidebar_link"]')
+reset_button = ('xpath', '//*[@id = "reset_sidebar_link"]')
+
+checkout_button = ('xpath', '//button[@data-test = "checkout"]')
+
+order_fname = ('xpath', '//*[@id = "first-name"]')
+order_lname = ('xpath', '//*[@id = "last-name"]')
+order_zipcode = ('xpath', '//*[@id = "postal-code"]')
+
+order_continue = ('xpath', '//*[@id = "continue"]')
+order_confirm = ('xpath', '//*[@id = "finish"]')
+order_return_mp = ('xpath', '//button[@id = "back-to-products"]')
+
+order_empty_error = ('xpath', '//*[@data-test = "error"]')
